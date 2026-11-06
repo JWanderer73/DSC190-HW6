@@ -125,6 +125,17 @@ def test_tomorrow_crosses_year_boundary() -> None:
     assert nldate.parse("tomorrow", today=date(2025, 12, 31)) == date(2026, 1, 1)
 
 
+@pytest.mark.parametrize(
+    ("text", "reference", "expected"),
+    [
+        ("the day after tomorrow", date(2025, 12, 31), date(2026, 1, 2)),
+        ("the day before yesterday", date(2024, 3, 1), date(2024, 2, 28)),
+    ],
+)
+def test_the_day_before_or_after(text: str, reference: date, expected: date) -> None:
+    assert nldate.parse(text, today=reference) == expected
+
+
 def test_days_ago() -> None:
     assert nldate.parse("10 days ago", today=REFERENCE) == date(2025, 3, 2)
 

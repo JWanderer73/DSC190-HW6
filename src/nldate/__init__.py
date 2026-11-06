@@ -129,7 +129,7 @@ def parse(s: str, today: date | None = None) -> date:
     month/day/year dates (full or three-letter months, with an optional period),
     today/now/yesterday/tomorrow, next/last weekdays, and day/week/month/year
     offsets joined by commas and/or "and". ``now`` refers to the reference
-    date, just like ``today``.
+    date, just like ``today``. Also accept "the day before/after <date>".
     Unknown expressions and invalid dates raise ValueError.
     """
     reference = date.today() if today is None else today
@@ -172,7 +172,8 @@ def parse(s: str, today: date | None = None) -> date:
         if match := re.fullmatch(r"(.+?) (before|after|from) (.+)", text):
             base = parse(match[3], reference)
             direction = -1 if match[2] == "before" else 1
-            return _apply_offset(match[1], base, direction)
+            offset = "1 day" if match[1] == "the day" else match[1]
+            return _apply_offset(offset, base, direction)
     except OverflowError as error:
         raise ValueError(f"Date is out of range: {s!r}") from error
 
