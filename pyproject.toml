@@ -2,7 +2,6 @@
 name = "nldate"
 version = "0.1.0"
 description = "Parse common English date expressions into calendar dates"
-readme = "README.md"
 authors = [
     { name = "Jwanderer73", email = "jakewanderer8@gmail.com" }
 ]
