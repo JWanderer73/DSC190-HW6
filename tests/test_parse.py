@@ -68,6 +68,24 @@ def test_named_date() -> None:
     assert nldate.parse("December 1, 2025", today=REFERENCE) == date(2025, 12, 1)
 
 
+@pytest.mark.parametrize(
+    ("text", "expected"),
+    [
+        ("Dec 1, 2025", date(2025, 12, 1)),
+        ("  fEb. 29th 2024  ", date(2024, 2, 29)),
+        ("5 days before Sep 1, 2025", date(2025, 8, 27)),
+    ],
+)
+def test_abbreviated_month_date(text: str, expected: date) -> None:
+    assert nldate.parse(text, today=REFERENCE) == expected
+
+
+@pytest.mark.parametrize("text", ["Feb 29, 2025", "Dece 1, 2025"])
+def test_invalid_abbreviated_month_date_raises_value_error(text: str) -> None:
+    with pytest.raises(ValueError):
+        nldate.parse(text, today=REFERENCE)
+
+
 def test_today_returns_date_with_positional_reference() -> None:
     result = nldate.parse("today", REFERENCE)
     assert type(result) is date

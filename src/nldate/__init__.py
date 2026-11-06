@@ -24,6 +24,7 @@ _MONTHS = {
         start=1,
     )
 }
+_MONTHS.update({name[:3]: number for name, number in _MONTHS.items()})
 _WEEKDAYS = (
     "monday",
     "tuesday",
@@ -124,9 +125,9 @@ def parse(s: str, today: date | None = None) -> date:
     """Parse a date using ``today`` as the reference for relative expressions.
 
     Accept ISO dates, YYYY/M/D dates (with optional zero padding), English
-    month/day/year dates, today/yesterday/tomorrow, next/last weekdays, and
-    day/week/month/year offsets. Unknown expressions and invalid dates raise
-    ValueError.
+    month/day/year dates (full or three-letter months, with an optional period),
+    today/yesterday/tomorrow, next/last weekdays, and day/week/month/year offsets.
+    Unknown expressions and invalid dates raise ValueError.
     """
     reference = date.today() if today is None else today
     text = " ".join(s.lower().split())
@@ -143,7 +144,9 @@ def parse(s: str, today: date | None = None) -> date:
         if match := re.fullmatch(r"(\d{4})/(\d{1,2})/(\d{1,2})", text):
             return date(int(match[1]), int(match[2]), int(match[3]))
 
-        if match := re.fullmatch(r"([a-z]+) (\d{1,2})(?:st|nd|rd|th)?,? (\d{4})", text):
+        if match := re.fullmatch(
+            r"([a-z]+)\.? (\d{1,2})(?:st|nd|rd|th)?,? (\d{4})", text
+        ):
             month = _MONTHS.get(match[1])
             if month is not None:
                 return date(int(match[3]), month, int(match[2]))
