@@ -109,9 +109,10 @@ def _apply_offset(text: str, base: date, direction: int) -> date:
             days += amount * (7 if unit == "week" else 1)
         remaining = remaining[match.end() :]
         if remaining:
-            if not remaining.startswith(" and "):
+            separator = re.match(r"(?: and |, *(?:and )?)", remaining)
+            if separator is None:
                 raise ValueError(f"Unrecognized date offset: {text!r}")
-            remaining = remaining[5:]
+            remaining = remaining[separator.end() :]
             if not remaining:
                 raise ValueError(f"Unrecognized date offset: {text!r}")
 
@@ -127,7 +128,8 @@ def parse(s: str, today: date | None = None) -> date:
     Accept ISO dates, YYYY/M/D dates (with optional zero padding), English
     month/day/year dates (full or three-letter months, with an optional period),
     today/now/yesterday/tomorrow, next/last weekdays, and day/week/month/year
-    offsets. ``now`` refers to the reference date, just like ``today``.
+    offsets joined by commas and/or "and". ``now`` refers to the reference
+    date, just like ``today``.
     Unknown expressions and invalid dates raise ValueError.
     """
     reference = date.today() if today is None else today

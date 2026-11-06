@@ -25,6 +25,17 @@ def test_compound_offset_from_yesterday() -> None:
     )
 
 
+@pytest.mark.parametrize(
+    ("text", "expected"),
+    [
+        ("2 years, 3 months before Dec. 1, 2025", date(2023, 9, 1)),
+        ("1 year, 1 month, and 2 days after Jan. 31, 2024", date(2025, 3, 2)),
+    ],
+)
+def test_comma_separated_offsets(text: str, expected: date) -> None:
+    assert nldate.parse(text, today=REFERENCE) == expected
+
+
 def test_next_tuesday() -> None:
     assert nldate.parse("next Tuesday", today=REFERENCE) == date(2025, 3, 18)
 
