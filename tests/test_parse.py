@@ -37,6 +37,20 @@ def test_in_three_days() -> None:
     assert nldate.parse("in 3 days", today=REFERENCE) == date(2025, 3, 15)
 
 
+@pytest.mark.parametrize(
+    ("text", "reference", "expected"),
+    [
+        ("2 weeks from now", REFERENCE, date(2025, 3, 26)),
+        ("  Two  DAYS from NOW  ", REFERENCE, date(2025, 3, 14)),
+        ("1 month from now", date(2025, 1, 31), date(2025, 2, 28)),
+        ("1 year from now", date(2024, 2, 29), date(2025, 2, 28)),
+        ("1 year and 2 months from now", REFERENCE, date(2026, 5, 12)),
+    ],
+)
+def test_offset_from_now(text: str, reference: date, expected: date) -> None:
+    assert nldate.parse(text, today=reference) == expected
+
+
 def test_iso_date() -> None:
     assert nldate.parse("2025-12-01", today=REFERENCE) == date(2025, 12, 1)
 

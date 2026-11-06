@@ -126,16 +126,17 @@ def parse(s: str, today: date | None = None) -> date:
 
     Accept ISO dates, YYYY/M/D dates (with optional zero padding), English
     month/day/year dates (full or three-letter months, with an optional period),
-    today/yesterday/tomorrow, next/last weekdays, and day/week/month/year offsets.
+    today/now/yesterday/tomorrow, next/last weekdays, and day/week/month/year
+    offsets. ``now`` refers to the reference date, just like ``today``.
     Unknown expressions and invalid dates raise ValueError.
     """
     reference = date.today() if today is None else today
     text = " ".join(s.lower().split())
 
     try:
-        if text in ("today", "yesterday", "tomorrow"):
+        if text in ("today", "now", "yesterday", "tomorrow"):
             return reference + timedelta(
-                days={"today": 0, "yesterday": -1, "tomorrow": 1}[text]
+                days={"today": 0, "now": 0, "yesterday": -1, "tomorrow": 1}[text]
             )
 
         if re.fullmatch(r"\d{4}-\d{2}-\d{2}", text):
