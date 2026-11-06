@@ -123,9 +123,10 @@ def _apply_offset(text: str, base: date, direction: int) -> date:
 def parse(s: str, today: date | None = None) -> date:
     """Parse a date using ``today`` as the reference for relative expressions.
 
-    Accept ISO dates, English month/day/year dates, today/yesterday/tomorrow,
-    next/last weekdays, and day/week/month/year offsets. Unknown expressions
-    and invalid dates raise ValueError.
+    Accept ISO dates, YYYY/M/D dates (with optional zero padding), English
+    month/day/year dates, today/yesterday/tomorrow, next/last weekdays, and
+    day/week/month/year offsets. Unknown expressions and invalid dates raise
+    ValueError.
     """
     reference = date.today() if today is None else today
     text = " ".join(s.lower().split())
@@ -138,6 +139,9 @@ def parse(s: str, today: date | None = None) -> date:
 
         if re.fullmatch(r"\d{4}-\d{2}-\d{2}", text):
             return date.fromisoformat(text)
+
+        if match := re.fullmatch(r"(\d{4})/(\d{1,2})/(\d{1,2})", text):
+            return date(int(match[1]), int(match[2]), int(match[3]))
 
         if match := re.fullmatch(r"([a-z]+) (\d{1,2})(?:st|nd|rd|th)?,? (\d{4})", text):
             month = _MONTHS.get(match[1])

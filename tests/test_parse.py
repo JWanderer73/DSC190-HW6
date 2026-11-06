@@ -41,6 +41,29 @@ def test_iso_date() -> None:
     assert nldate.parse("2025-12-01", today=REFERENCE) == date(2025, 12, 1)
 
 
+@pytest.mark.parametrize(
+    ("text", "expected"),
+    [
+        ("2025/12/04", date(2025, 12, 4)),
+        ("2025/1/4", date(2025, 1, 4)),
+        ("2024/02/29", date(2024, 2, 29)),
+    ],
+)
+def test_year_first_slash_date(text: str, expected: date) -> None:
+    assert nldate.parse(text, today=REFERENCE) == expected
+
+
+def test_invalid_year_first_slash_date_raises_value_error() -> None:
+    with pytest.raises(ValueError):
+        nldate.parse("2025/02/29", today=REFERENCE)
+
+
+def test_offset_from_year_first_slash_date() -> None:
+    assert nldate.parse("5 days before 2025/12/04", today=REFERENCE) == date(
+        2025, 11, 29
+    )
+
+
 def test_named_date() -> None:
     assert nldate.parse("December 1, 2025", today=REFERENCE) == date(2025, 12, 1)
 
